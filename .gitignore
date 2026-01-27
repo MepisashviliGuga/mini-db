@@ -39,3 +39,8 @@
 
 # debug information files
 *.dwo
+
+# ... (other stuff that was already there) ...
+
+# Ignore the build folder
+build/
