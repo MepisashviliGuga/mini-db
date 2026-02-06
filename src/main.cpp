@@ -4,10 +4,22 @@
 #include <vector>
 #include <db.h>
 #include <cstring>
+#include <fstream>
 
 int main()
 {
     std::vector<Row> inmemorydatabase;
+    std::ifstream source_file("db.bin",std::ios::binary);
+
+    if(source_file){
+
+        Row temp_row;
+        while (source_file.read(reinterpret_cast<char*>(&temp_row), sizeof(Row))) {
+                 inmemorydatabase.push_back(temp_row);
+        }
+        source_file.close();
+    }
+
     while (true)
     {
         std::string input_line;
@@ -52,6 +64,16 @@ int main()
                 entry.username[username.size()] = '\0';
                 entry.email[email.size()] = '\0';
                 inmemorydatabase.push_back(entry);
+
+                std::ofstream db_file("db.bin",std::ios::app | std::ios::binary);
+                if(!db_file){
+                    std::cout<<"INTERNAL ERROR, could not open file for saving";
+                    return 1;
+                }
+                db_file.write(reinterpret_cast<char*>(&entry),sizeof(Row));
+                db_file.close();
+            
+
             }
             else
             {
