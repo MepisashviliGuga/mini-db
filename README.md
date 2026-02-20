@@ -1,37 +1,28 @@
 # MiniDB: A Custom C++ Database Engine
 
-MiniDB is a persistent key-value store built from scratch to explore low-level systems engineering concepts.  
-Built by **Guga** and **Dato**.
+A persistent, paged storage engine built from scratch to explore low-level systems engineering and database internals.
 
-## 🎯 Project Goals
-- Understand how databases work at a low level
-- Practice memory management and data structures in C++
-- Build a simple SQL-like interface from scratch
-- Gain experience with real-world Git workflows and collaboration
+## 🚀 Project Status: Phase 3 (Architecture & Paging) Complete
 
-## 🚀 Current Features
-- **Phase 1 (Complete):**
-  - In-memory storage engine
-  - Interactive SQL-like REPL
-- **Supported commands:**
-  - `insert`
-  - `select`
-  - `exit`
+### 🏗️ Current Architecture
+The engine has transitioned from a simple in-memory vector to a **Paged Storage Architecture**. 
 
-## 🛠 Project Structure
-- `src/` — Source code (`main.cpp`)
-- `include/` — Header files (`db.h`)
-- `python_client/` — Planned future client SDK
+- **Pager:** Manages 4KB blocks (Pages) of binary data. It includes a **Buffer Pool (Cache)** to minimize Disk I/O by keeping recently used pages in RAM.
+- **Table:** Handles logical-to-physical mapping. It calculates exactly which Page and which Offset a specific Row ID belongs to.
+- **Persistence:** Implementation of a custom serialization layer using `reinterpret_cast` and binary `fstream` to ensure data survives process restarts.
+
+### 🛠️ Key Technical Concepts Implemented
+- **Memory Alignment:** Ensuring rows do not cross 4KB page boundaries to optimize hardware read cycles.
+- **Buffer Management:** A cache system that prevents multiple allocations of the same page and manages the lifecycle of heap-allocated memory.
+- **RAII (Resource Acquisition Is Initialization):** Using C++ destructors to ensure file handles are closed and buffered data is flushed to disk safely on exit.
+- **Pointer Arithmetic:** Manual calculation of memory offsets for data retrieval.
 
 ## 💻 How to Build & Run
+**Prerequisites:** CMake and a C++17 compatible compiler (GCC/Clang/MSVC).
 
-### Prerequisites
-- CMake
-- C++ compiler (GCC or MinGW)
-
-### Build Steps
 ```bash
 mkdir build
 cd build
 cmake ..
 cmake --build .
+./minidb
